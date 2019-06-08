@@ -46,9 +46,7 @@ class Block {
             self.hash = SHA256(self.height + self.body + self.time).toString();
             // Returning the Block is valid
             if (currentHash == self.hash) {
-                resolve();
-            } else {
-                reject();
+                resolve(true);
             }
         });
     }
