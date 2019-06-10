@@ -1,6 +1,7 @@
 const assert = require('assert');
 const hex2ascii = require('hex2ascii');
 const SHA256 = require('crypto-js/sha256');
+// const sinon = require('sinon');
 
 const Block = require('./block.js');
 const BlockChain = require('./blockchain.js');
@@ -135,6 +136,9 @@ describe("BlockChain Class Test", function() {
 
         it("Test submitStar method", function() {
             let blockChain = new BlockChain.Blockchain();
+            // let spy = sinon.spy();
+            // let mock = sinon.mock(blockChain);
+            // mock.expects("_verifyMessage").returns(true);
             let address = "12345";
             let message = address + ':' + new Date().getTime().toString().slice(0,-3) + ':starRegistry';
             let signature = "54321";

@@ -120,7 +120,7 @@ class Blockchain {
             let currentTime = parseInt(new Date().getTime().toString().slice(0, -3));
             let elapsed = currentTime - time;
             if (elapsed < fiveMinutes) {
-                let messageOk = true; //bitcoinMessage.verify(message, address, signature);
+                let messageOk = this._verifyMessage(message, address, signature);
                 if (messageOk) {
                     let body = new BodyClass.Body(address, address, star);
                     let block = new BlockClass.Block(body);
@@ -133,6 +133,25 @@ class Blockchain {
                 reject(new Error('Old message'));
             }
         });
+    }
+
+    /**
+     * The purpose of this method is to mock bitcoinMessage.verify function.
+     * 
+     * @param {*} message 
+     * @param {*} address 
+     * @param {*} signature 
+     */
+    _verifyMessage(message, address, signature) {
+        let result = false;
+
+        try {
+            result = bitcoinMessage.verify(message, address, signature);
+        } catch(error) {
+            console.log("Error: " + error);
+        }
+        
+        return result;
     }
 
     /**
@@ -186,7 +205,7 @@ class Blockchain {
             let ok = self.chain.every(function(block) {
                 let body = block.getBData();
                 if (body != null && body.address === address) {
-                    stars.push(block.body.star);
+                    stars.push(body.star);
                 }
                 return true;
             });
