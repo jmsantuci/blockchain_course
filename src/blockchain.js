@@ -142,16 +142,15 @@ class Blockchain {
      * @param {*} signature 
      */
     _verifyMessage(message, address, signature) {
-        // let result = false;
+        let result = false;
 
-        // try {
-        //     result = bitcoinMessage.verify(message, address, signature);
-        // } catch(error) {
-        //     console.log("Error: " + error);
-        // }
+        try {
+            result = bitcoinMessage.verify(message, address, signature);
+        } catch(error) {
+            console.log("Error: " + error);
+        }
         
-        // return result;
-        return true;
+        return result;
     }
 
     /**
