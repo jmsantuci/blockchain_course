@@ -41,12 +41,14 @@ class Block {
             // Save in auxiliary variable the current block hash
             let currentHash = self.hash;
             // Recalculate the hash of the Block
+            self.hash = self.generateHash();
             // Comparing if the hashes changed
-            // Returning the Block is not valid
-            self.hash = SHA256(self.height + self.body + self.time).toString();
-            // Returning the Block is valid
-            if (currentHash == self.hash) {
-                resolve(true);
+            if (currentHash === self.hash) {
+                resolve();
+                // Returning the Block is valid
+            } else {
+                // Returning the Block is not valid
+                reject();
             }
         });
     }
@@ -73,6 +75,18 @@ class Block {
         return data;
     }
 
+    /**
+     * Auxiliary Method to generate hash using the followings attributes:
+     * 
+     * 1. height
+     * 2. body
+     * 3. time
+     * 4. previousBlockHash
+     */
+    generateHash() {
+        let newHash = SHA256(this.height + this.body + this.time + this.previousBlockHash).toString();;
+        return newHash;
+    }
 }
 
 module.exports.Block = Block;                    // Exposing the Block class as a module

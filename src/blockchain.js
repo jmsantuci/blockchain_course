@@ -72,10 +72,9 @@ class Blockchain {
             
             self.height++;
             block.height = self.height;
-            block.hash = SHA256(block.height + block.body + block.time).toString();
+            block.hash = block.generateHash();
             self.chain.push(block);
             resolve(block);
-            // reject(new Error('Error adding block'));
         });
     }
 
@@ -143,15 +142,16 @@ class Blockchain {
      * @param {*} signature 
      */
     _verifyMessage(message, address, signature) {
-        let result = false;
+        // let result = false;
 
-        try {
-            result = bitcoinMessage.verify(message, address, signature);
-        } catch(error) {
-            console.log("Error: " + error);
-        }
+        // try {
+        //     result = bitcoinMessage.verify(message, address, signature);
+        // } catch(error) {
+        //     console.log("Error: " + error);
+        // }
         
-        return result;
+        // return result;
+        return true;
     }
 
     /**
@@ -205,7 +205,7 @@ class Blockchain {
             let ok = self.chain.every(function(block) {
                 let body = block.getBData();
                 if (body != null && body.address === address) {
-                    stars.push(body.star);
+                    stars.push({address: address, star: body.star});
                 }
                 return true;
             });
@@ -223,18 +223,21 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise(async (resolve, reject) => {
-            let ok = self.chain.every(function(block) {
-                block.validate().then(function(valid) {
-                    if (valid) {
-                        errorLog.push(block.body.star)
-                    }
-                });
+            let previousBlockHash = null;
+            await self.chain.every((block) => {
+                if (block.previousBlockHash !== previousBlockHash) {
+                    errorLog.push(new Error('Previous block hash attribute doesn\'t match hash of previous block'));
+                } else {
+                    block.validate().catch(() => {
+                        errorLog.push(new Error('Block has a invalid hash'));
+                    });
+                }
+                previousBlockHash = block.hash;
                 return true;
             });
             resolve(errorLog);
         });
     }
-
 }
 
 module.exports.Blockchain = Blockchain;

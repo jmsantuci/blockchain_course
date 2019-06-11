@@ -203,6 +203,33 @@ describe("BlockChain Class Test", function() {
                 assert.equal(1, stars.length);
             });
         });
+
+        it("Test validateChain method", function() {
+            let blockChain = new BlockChain.Blockchain();
+            let data1 = new DataTest("Fist block", 1);
+            let data2 = new DataTest("Second block", 2);
+            let data3 = new DataTest("Third block", 3);
+            let invalidPreviousBlockHash = new Block.Block(data2);
+            let invalidBlockAttribute = new Block.Block(data3);
+
+            blockChain._addBlock(new Block.Block(data1));
+            blockChain._addBlock(invalidPreviousBlockHash);
+            blockChain._addBlock(invalidBlockAttribute);
+
+            // Change third block previous hash
+            invalidPreviousBlockHash.previousBlockHash = invalidBlockAttribute.hash;
+            invalidBlockAttribute.hash = invalidBlockAttribute.generateHash();
+            // Change second block attribute
+            invalidBlockAttribute.height = 5;
+
+            blockChain.validateChain().then(function(errorLog) {
+                assert.notEqual(null, errorLog);
+                assert.equal(2, errorLog.length);
+                assert.equal('Error: Previous block hash attribute doesn\'t match hash of previous block', errorLog[0].toString());
+                assert.equal('Error: Block has a invalid hash', errorLog[1].toString());
+            });
+        });
+
     });
 
 });

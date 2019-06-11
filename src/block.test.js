@@ -36,7 +36,7 @@ describe('Test of Block class', function() {
     describe('Test of Block validate method', function() {
         it('valid block', function() {
             let block = new Block.Block(dataTest);
-            block.hash = SHA256(block.height + block.body + block.time).toString();
+            block.hash = block.generateHash();
             return block.validate().then(function() {
                 assert.ok(true, "Block is intact");
             }).catch(function(error) {
@@ -46,8 +46,8 @@ describe('Test of Block class', function() {
 
         it('invalid block', function() {
             let invalidBlock = new Block.Block(dataTest);
-            invalidBlock.hash = SHA256(invalidBlock.height + invalidBlock.body + invalidBlock.time).toString();
-            invalidBlock.height = 1;
+            invalidBlock.hash = invalidBlock.generateHash();
+            invalidBlock.height = 1; // Change block
             invalidBlock.validate().then(function() {
                 assert.fail("This block should be tempered and invalid");
             }).catch(function(error) {
